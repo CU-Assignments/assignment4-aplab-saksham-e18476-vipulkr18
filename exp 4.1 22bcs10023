@@ -1,0 +1,41 @@
+#include <iostream>
+#include <vector>
+
+std::vector<int> beautifulArray(int n) {
+    if (n == 1) {
+        return {1};
+    }
+
+    std::vector<int> odd, even;
+
+    // Recursively build the beautiful array
+    for (int i = 1; i <= n; i += 2) {
+        odd.push_back(i); // Add odd numbers
+    }
+    for (int i = 2; i <= n; i += 2) {
+        even.push_back(i); // Add even numbers
+    }
+
+    // Combine odd and even parts
+    odd.insert(odd.end(), even.begin(), even.end());
+    return odd;
+}
+
+int main() {
+    int n;
+    std::cout << "Enter an integer n (1 <= n <= 1000): ";
+    std::cin >> n;
+
+    if (n >= 1 && n <= 1000) {
+        std::vector<int> result = beautifulArray(n);
+        std::cout << "Beautiful array: ";
+        for (int num : result) {
+            std::cout << num << " ";
+        }
+        std::cout << std::endl;
+    } else {
+        std::cout << "Please enter a valid integer between 1 and 1000." << std::endl;
+    }
+
+    return 0;
+}
