@@ -1,0 +1,80 @@
+#include <iostream>
+#include <vector>
+#include <queue>
+#include <algorithm>
+
+using namespace std;
+
+class SkylineProblem {
+public:
+    vector<vector<int>> getSkyline(vector<vector<int>>& buildings) {
+        vector<vector<int>> result;
+        vector<pair<int, int>> events;
+
+        // Create events for each building
+        for (const auto& building : buildings) {
+            events.emplace_back(building[0], -building[2]); // Start of building
+            events.emplace_back(building[1], building[2]);  // End of building
+        }
+
+        // Sort events
+        sort(events.begin(), events.end(), [](const pair<int, int>& a, const pair<int, int>& b) {
+            if (a.first != b.first) {
+                return a.first < b.first;
+            }
+            return a.second < b.second; // Start before end if same x-coordinate
+        });
+
+        // Max heap to keep track of heights
+        priority_queue<int> heights;
+        heights.push(0); // Ground level
+
+        int prevHeight = 0;
+
+        // Process events
+        for (const auto& event : events) {
+            if (event.second < 0) { // Start of a building
+                heights.push(-event.second); // Add height
+            } else { // End of a building
+                // Remove height (lazy removal)
+                // We will not remove it from the heap directly, but we will ignore it later
+            }
+
+            // Get current max height
+            int currentHeight = heights.top();
+
+            // If the height has changed, add a key point
+            if (currentHeight != prevHeight) {
+                result.push_back({event.first, currentHeight});
+                prevHeight = currentHeight; // Update previous height
+            }
+        }
+
+        return result;
+    }
+};
+
+int main() {
+    SkylineProblem skylineProblem;
+    
+    int n;
+    cout << "Enter the number of buildings: ";
+    cin >> n;
+
+    vector<vector<int>> buildings(n, vector<int>(3));
+    cout << "Enter the buildings in the format [left, right, height]:\n";
+    for (int i = 0; i < n; ++i) {
+        cout << "Building " << i + 1 << ": ";
+        cin >> buildings[i][0] >> buildings[i][1] >> buildings[i][2];
+    }
+
+    vector<vector<int>> result = skylineProblem.getSkyline(buildings);
+    
+    cout << "Skyline: ";
+    for (const auto& point : result) {
+        cout << "[" << point[0] << ", " << point[1] << "] ";
+    }
+    cout << endl;
+
+    return 0;
+}
